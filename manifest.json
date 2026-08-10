@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "GPTFig",
-  "version": "0.2.0",
-  "description": "Render # @plot Python blocks as inline Matplotlib and MathText figures in ChatGPT.",
+  "version": "0.3.0",
+  "description": "Render # @plot Python blocks as inline Matplotlib, MathText, and geometry figures in ChatGPT.",
   "content_scripts": [
     {
       "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],

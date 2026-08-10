@@ -10,9 +10,14 @@ const fontReady = fetch(new URL("./vendor/fonts/NotoSansCJKsc-Regular.otf", impo
     if (!response.ok) throw new Error("Failed to load Noto Sans CJK SC");
     return response.arrayBuffer();
   });
+const geometryReady = fetch(new URL("./gptfig_geometry.py", import.meta.url))
+  .then((response) => {
+    if (!response.ok) throw new Error("Failed to load GPTFig geometry helpers");
+    return response.text();
+  });
 
 const SETUP = `
-import base64, io, json
+import base64, io, json, sys
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -21,6 +26,8 @@ from matplotlib import font_manager, rcParams
 FONT_PATH = "/fonts/NotoSansCJKsc-Regular.otf"
 font_manager.fontManager.addfont(FONT_PATH)
 CJK_FONT = font_manager.FontProperties(fname=FONT_PATH).get_name()
+if "/" not in sys.path:
+    sys.path.insert(0, "/")
 
 plt.show = lambda *args, **kwargs: None
 
@@ -55,9 +62,10 @@ const ready = loadPyodide({
   packages: ["matplotlib"]
 });
 
-const renderer = Promise.all([ready, fontReady]).then(async ([pyodide, font]) => {
+const renderer = Promise.all([ready, fontReady, geometryReady]).then(async ([pyodide, font, geometry]) => {
   pyodide.FS.mkdirTree("/fonts");
   pyodide.FS.writeFile("/fonts/NotoSansCJKsc-Regular.otf", new Uint8Array(font));
+  pyodide.FS.writeFile("/gptfig_geometry.py", geometry);
   await pyodide.runPythonAsync(SETUP);
   return pyodide.globals.get("_render_plot");
 });
