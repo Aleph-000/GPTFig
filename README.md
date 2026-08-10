@@ -12,6 +12,7 @@ GPTFig 是一个 Chrome/Edge 扩展，把 ChatGPT 回答中以 `// @plot` 开头
 2. 开启“开发人员模式”。
 3. 选择“加载解压缩的扩展”，选中本项目文件夹。
 4. 刷新 ChatGPT 页面。
+5. 打开 [首次记忆提示词](GPTFIG_INITIAL_MEMORY_PROMPT.md)，将全文发送给 ChatGPT，并让它保存到长期记忆。
 
 ### 使用
 
@@ -30,7 +31,7 @@ GPTFig 是一个 Chrome/Edge 扩展，把 ChatGPT 回答中以 `// @plot` 开头
 })
 ```
 
-只有首个非空行为 `// @plot` 的代码块会渲染。成功后代码框被居中的白底 SVG 替换；失败时保留原代码块。可把 [GPTFig 绘图规范](GPTFIG_DRAWING_GUIDELINES.md) 交给 ChatGPT，并让它保存为长期记忆。
+只有首个非空行为 `// @plot` 的代码块会渲染。成功后代码框被居中的白底 SVG 替换；失败时保留原代码块。首次使用请按安装第 5 步初始化长期记忆。
 
 ### 内置组件
 
@@ -59,6 +60,7 @@ GPTFig is a Chrome/Edge extension that replaces ChatGPT `// @plot` Typst + CeTZ 
 2. Enable **Developer mode**.
 3. Choose **Load unpacked** and select this project folder.
 4. Refresh the ChatGPT page.
+5. Open the [initial memory prompt](GPTFIG_INITIAL_MEMORY_PROMPT.md), send the complete text to ChatGPT, and ask it to save the instructions to memory.
 
 ### Usage
 
@@ -77,7 +79,7 @@ Ask ChatGPT to output a `typst` code block in this form:
 })
 ```
 
-Only code blocks whose first non-empty line is `// @plot` are rendered. On success, the code block is replaced by a centered SVG with a white background; on failure, the original code remains. You can give the [GPTFig drawing guidelines](GPTFIG_DRAWING_GUIDELINES.md) to ChatGPT and ask it to save the instructions to memory.
+Only code blocks whose first non-empty line is `// @plot` are rendered. On success, the code block is replaced by a centered SVG with a white background; on failure, the original code remains. For first-time setup, initialize ChatGPT memory as described in installation step 5.
 
 ### Bundled components
 
