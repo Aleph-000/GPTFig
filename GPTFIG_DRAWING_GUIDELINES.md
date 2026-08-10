@@ -8,13 +8,19 @@
 
 对于 `xj`、`js`、`jj` 回答尤其优先采用“解释 → 图 → 继续解释”的结构。不要为了有图而强行加图；只有图能提升理解或展示效果时才加入。
 
+不要解释插件或提示用户运行代码，直接插入代码块等待浏览器渲染。上下文如果必要的话可以解释插图，但是不要解释插图的代码，正常进行上下文，就像插图自然而然作为文章的附图一样。
+
 ## 代码块格式
 
-绘图代码必须放在 `typst` 代码块中，首个非空行严格为 `// @plot`：
+绘图代码必须放在 `typst` 代码块中，首个非空行严格为 `// @plot`，开头严格导入如下五个绘图库：
 
 ```typst
 // @plot
 #import "@preview/cetz:0.5.2"
+#import "@preview/cetz-plot:0.1.4"
+#import "@preview/simple-plot:1.0.0"
+#import "@preview/fletcher:0.5.8"
+#import "@preview/cetz-venn:0.2.0"
 
 #cetz.canvas({
   import cetz.draw: *
@@ -22,19 +28,25 @@
 })
 ```
 
+对应包的函数/API 文档：
+
+- [CeTZ 函数 API](https://cetz-package.github.io/docs/api/overview/)
+- [CeTZ-Plot 函数手册](https://github.com/cetz-package/cetz-plot/blob/master/manual.pdf)
+- [Simple-Plot 函数与参数](https://typst.app/universe/package/simple-plot/)
+- [Fletcher 函数手册](https://github.com/Jollywatt/typst-fletcher/blob/main/docs/manual.pdf)
+- [CeTZ-Venn 函数手册](https://github.com/cetz-package/cetz-venn/blob/stable/manual.pdf)
+
 ## 规则
 
 - 函数图优先使用 `@preview/simple-plot:1.0.0`；复杂坐标图和统计图使用 `@preview/cetz-plot:0.1.4`，不要手写少量折线点近似曲线。
-- 每次插图之前先查阅 CeTZ 官方文档，看 API、函数怎么使用。
+- 每次插图之前先查阅 [CeTZ 官方文档](https://cetz-package.github.io/docs/)和上方对应绘图库的函数/API 文档，看 API、函数怎么使用。
 - 图内公式使用 Typst 数学语法 `$...$`，不要使用 LaTeX 命令。
 - 可以直接使用中文；避免 Emoji 和罕见字符。
-- 默认采用简洁教材风格：标签不重叠，主体用实线，辅助线用虚线，颜色只突出重点，如果利于展示则标出点的字母。
+- 默认采用简洁教材风格：标签不重叠，主体用实线，辅助线用虚线，颜色用于突出重点，如果利于展示则标出点的字母。可以用彩色，让视觉风格简洁美观。
+- 尽量不用灰色；如果要画虚线，画成 `dashed` 的样子。
 - 控制图形尺寸和采样数量；复杂内容拆成多张图，分别放在对应正文位置。
-- 不要解释插件或提示用户运行代码，直接插入代码块等待浏览器渲染。
 - 函数与几何坐标必须按公式计算，并保持横纵坐标比例正确。
-- 上下文如果必要的话可以解释插图，但是不要解释插图的代码，正常进行上下文，就像插图自然而然作为文章的附图一样。
 - Typst 赋值时禁止在 `=` 后直接换行。多行计算必须写成 `let x = (...)`，用括号包住完整表达式；简单计算保持单行。每个 `// @plot` 代码块必须独立检查语法。
 - 如果涉及到具体长度、坐标轴、原点等，则将坐标轴画出，使用 `cetz-plot.plot.plot()` 画坐标轴。
-- 尽量不用灰色；如果要画虚线，画成 `dashed` 的样子。
-- 使用 `import cetz.draw: *` 后，禁止写 `stroke: stroke(...)`；虚线统一写成 `stroke: (paint: color, thickness: 0.8pt, dash: "dashed")`。只导入实际使用的绘图包。
+- 使用 `import cetz.draw: *` 后，禁止写 `stroke: stroke(...)`；虚线统一写成 `stroke: (paint: color, thickness: 0.8pt, dash: "dashed")`。
 - 如果需要坐标轴，使用穿过原点的十字坐标轴，有正向实心箭头和标签，不要边框、刻度、数字或网格。坐标轴按图中全部图形的实际边界自动取值覆盖最值，只保留少量留白，并保持横纵坐标等比例。
