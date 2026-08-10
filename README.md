@@ -30,7 +30,7 @@ GPTFig 是一个 Chrome/Edge 扩展，把 ChatGPT 回答中以 `// @plot` 开头
 })
 ```
 
-只有首个非空行为 `// @plot` 的代码块会渲染。成功后代码框被居中的白底 SVG 替换；失败时保留原代码块。可复制 [GPTFIG_MEMORY_PROMPT.md](GPTFIG_MEMORY_PROMPT.md) 给 ChatGPT，并让它保存为长期记忆。
+只有首个非空行为 `// @plot` 的代码块会渲染。成功后代码框被居中的白底 SVG 替换；失败时保留原代码块。可把 [GPTFig 绘图规范](GPTFIG_DRAWING_GUIDELINES.md) 交给 ChatGPT，并让它保存为长期记忆。
 
 ### 内置组件
 
@@ -77,7 +77,7 @@ Ask ChatGPT to output a `typst` code block in this form:
 })
 ```
 
-Only code blocks whose first non-empty line is `// @plot` are rendered. On success, the code block is replaced by a centered SVG with a white background; on failure, the original code remains. You can give [GPTFIG_MEMORY_PROMPT.md](GPTFIG_MEMORY_PROMPT.md) to ChatGPT and ask it to save the instructions to memory.
+Only code blocks whose first non-empty line is `// @plot` are rendered. On success, the code block is replaced by a centered SVG with a white background; on failure, the original code remains. You can give the [GPTFig drawing guidelines](GPTFIG_DRAWING_GUIDELINES.md) to ChatGPT and ask it to save the instructions to memory.
 
 ### Bundled components
 
