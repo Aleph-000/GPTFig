@@ -1,6 +1,6 @@
 ﻿# GPTFig
 
-把 ChatGPT 回答中首个非空行为 `# @plot` 的代码块原地替换成 Matplotlib 静态图。Python、NumPy、Matplotlib、MathText、几何助手和 Noto Sans CJK SC 都从扩展目录加载，在浏览器本地执行；扩展不申请任何权限，也不向外部服务发送代码。
+把 ChatGPT 回答中首个非空行为 `# @plot` 的代码块原地替换成 Matplotlib 静态图。Python、NumPy、Matplotlib、MathText、Geometer 和 Noto Sans CJK SC 都从扩展目录加载，在浏览器本地执行；扩展不申请任何权限，也不向外部服务发送代码。
 
 ## 安装
 
@@ -54,51 +54,42 @@ plt.show()
 
 默认使用 Matplotlib 自带的 STIX 数学字体。MathText 支持上下标、分数、根号、求和、积分、希腊字母和常用数学符号，但不是完整 LaTeX：不要生成 `\begin{matrix}`、`align`、`cases`、`\newcommand`、任意宏包或完整 LaTeX 文档。中文放在 `$...$` 外即可继续使用 Noto Sans CJK SC。
 
-## 几何助手
+## 几何绘图
 
-`gptfig_geometry` 是随扩展加载的纯 Python 模块，不增加第三方依赖。它提供统一的教材式平面和立体几何绘图风格。
+GPTFig 不再提供私有几何 API。几何构造和计算使用现成的 `geometer` 0.4.2；绘图使用 Matplotlib 标准工具。
 
-### 平面几何
-
-```python
-# @plot
-from gptfig_geometry import Plane, perpendicular_foot
-
-g = Plane()
-g.point("A", (0, 0), offset=(-12, -16))
-g.point("B", (4, 0), offset=(7, -16))
-g.point("C", (1.4, 3), offset=(-4, 7))
-g.polygon("A", "B", "C")
-
-H = perpendicular_foot(g.points["C"], g.points["A"], g.points["B"])
-g.point("H", H, offset=(-4, -17))
-g.auxiliary("C", "H")
-g.right_angle("C", "H", "A")
-g.angle("A", "C", "B", label=r"$\gamma$")
-g.equal_marks("A", "C")
-g.equal_marks("B", "C")
-g.finish()
-```
-
-可用绘图方法包括 `point`、`segment`、`auxiliary`、`polygon`、`circle`、`arc`、`angle`、`right_angle`、`equal_marks`、`parallel_marks`、`label` 和 `finish`。同时提供中点、垂足、直线交点、重心、外心、内心和垂心计算函数。
-
-### 立体几何
+- 射影几何、齐次坐标、无穷远点、交比和圆锥曲线：`geometer`
+- 平面图形：`matplotlib.patches` 中的 `Ellipse`、`Arc`、`Polygon`、`FancyArrowPatch` 等
+- 立体图形：Matplotlib 内置的 `mpl_toolkits.mplot3d` 和 `Poly3DCollection`
 
 ```python
 # @plot
-from gptfig_geometry import Space
+import matplotlib.pyplot as plt
+from matplotlib.patches import Ellipse
+from geometer import Point, Line, meet
 
-s = Space(elev=22, azim=-48)
-s.box(
-    size=(3.4, 2.2, 2.4),
-    labels=("A", "B", "C", "D", "A1", "B1", "C1", "D1"),
-    hidden_edges=(("A", "D"), ("C", "D"), ("D", "D1")),
-)
-s.section("A", "B1", "C1", "D")
-s.finish()
+A, B = Point(-3, 0), Point(3, 0)
+C, D = Point(-1.5, 1.7), Point(1.5, 1.7)
+X = meet(Line(A, D), Line(B, C))
+
+def xy(point):
+    return point.normalized_array[:2].astype(float)
+
+fig, ax = plt.subplots(figsize=(7, 5), layout="constrained")
+ax.add_patch(Ellipse((0, 0), 6, 4, fill=False, linewidth=1.8))
+for P, Q in ((A, D), (B, C)):
+    p, q = xy(P), xy(Q)
+    ax.plot([p[0], q[0]], [p[1], q[1]], color="black")
+
+x, y = xy(X)
+ax.scatter(x, y, color="tab:red", zorder=3)
+ax.text(x, y, "  X")
+ax.set_aspect("equal")
+ax.axis("off")
+plt.show()
 ```
 
-立体图默认使用正交投影，支持多面体、长方体、棱锥、截面、球、圆柱和圆锥。复杂立体的遮挡判断不是 CAD 级别；为了得到稳定的教材风格，请通过 `hidden_edges` 明确指定需要显示为虚线的边。
+`geometer` 还提供 `Conic.from_points`、`crossratio`、`join`、`meet`、射影变换以及三维点、直线和平面计算。它负责几何关系，Matplotlib 负责最终静态 PNG 的样式和排版。
 
 ## 安全说明
 

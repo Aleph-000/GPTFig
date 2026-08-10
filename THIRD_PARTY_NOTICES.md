@@ -10,7 +10,11 @@ Project: <https://github.com/pyodide/pyodide>
 
 ## Python packages
 
-The wheels under `vendor/pyodide/` include Matplotlib, NumPy, Pillow, contourpy, cycler, fonttools, kiwisolver, packaging, pyparsing, python-dateutil, pytz, and six. Their package metadata remains embedded in each wheel, together with any license or notice files supplied by the upstream wheel.
+The wheels under `vendor/pyodide/` include Matplotlib, NumPy, Geometer, typing-extensions, Pillow, contourpy, cycler, fonttools, kiwisolver, packaging, pyparsing, python-dateutil, pytz, and six. Their package metadata remains embedded in each wheel, together with any license or notice files supplied by the upstream wheel.
+
+Geometer is distributed under the MIT License. Its license is embedded in `vendor/pyodide/geometer-0.4.2-py3-none-any.whl`.
+
+Project: <https://github.com/jan-mue/geometer>
 
 ## Noto Sans CJK SC
 
