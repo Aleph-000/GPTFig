@@ -4,7 +4,13 @@
 
 ## 中文
 
-GPTFig 是一个 Chrome/Edge 扩展，把 ChatGPT 回答中以 `// @plot` 开头的 Typst + CeTZ 代码块原地渲染成静态 SVG。编译器、绘图库、字体和依赖均随扩展提供，在浏览器本地运行。
+GPTFig 是一个 Chrome/Edge 扩展，可以让 ChatGPT 在网页版聊天中无感插入函数、几何等图像。
+
+拓展把 ChatGPT 回答中拥有指定标识的 Typst + CeTZ 代码块原地渲染成静态 SVG。编译器、绘图库、字体和依赖均随扩展提供，在浏览器本地运行。
+
+![1786393532752](image/README/1786393532752.png)
+
+![1786393614864](image/README/1786393614864.png)
 
 ### 安装
 
