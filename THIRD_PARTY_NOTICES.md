@@ -10,7 +10,7 @@ Project: <https://github.com/pyodide/pyodide>
 
 ## Python packages
 
-The wheels under `vendor/pyodide/` include Matplotlib, NumPy, Pillow, contourpy, cycler, fonttools, kiwisolver, packaging, pyparsing, python-dateutil, pytz, and six. Their original license and metadata files remain embedded in each wheel under its `.dist-info` directory.
+The wheels under `vendor/pyodide/` include Matplotlib, NumPy, Pillow, contourpy, cycler, fonttools, kiwisolver, packaging, pyparsing, python-dateutil, pytz, and six. Their package metadata remains embedded in each wheel, together with any license or notice files supplied by the upstream wheel.
 
 ## Noto Sans CJK SC
 

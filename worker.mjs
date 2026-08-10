@@ -30,6 +30,9 @@ def _render_plot(source):
         rcParams["font.family"] = "sans-serif"
         rcParams["font.sans-serif"] = [CJK_FONT, "DejaVu Sans"]
         rcParams["axes.unicode_minus"] = False
+        rcParams["text.usetex"] = False
+        rcParams["mathtext.fontset"] = "stix"
+        rcParams["mathtext.default"] = "it"
         exec(compile(source, "<inline-plot>", "exec"), {"__name__": "__main__"})
         images = []
         for number in plt.get_fignums():
