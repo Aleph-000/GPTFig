@@ -1,6 +1,6 @@
 ﻿# GPTFig
 
-把 ChatGPT 回答中首个非空行为 `# @plot` 的代码块原地替换成 Matplotlib 静态图。Python、NumPy、Matplotlib、MathText、Geometer 和 Noto Sans CJK SC 都从扩展目录加载，在浏览器本地执行；扩展不申请任何权限，也不向外部服务发送代码。
+把 ChatGPT 回答中以 `// @plot` 开头的代码块原地替换成 Typst + CeTZ 静态 SVG。编译器、绘图库、依赖和中英文字体都随扩展提供，在浏览器本地运行；扩展不申请额外权限，也不会把代码发送到外部服务。
 
 ## 安装
 
@@ -9,91 +9,54 @@
 3. 选择“加载解压缩的扩展”，然后选中本文件夹。
 4. 刷新 ChatGPT 页面。
 
+首次渲染需要加载约几十 MB 的本地编译器和字体，之后同一浏览器会话内会明显更快。
+
 ## 用法
 
-让 ChatGPT 输出如下 Python 代码块：
+让 ChatGPT 输出如下 Typst 代码块：
 
-```python
-# @plot
-import matplotlib.pyplot as plt
-import numpy as np
+```typst
+// @plot
+#import "@preview/cetz:0.5.2"
 
-x = np.linspace(-3, 3, 500)
+#cetz.canvas({
+  import cetz.draw: *
 
-plt.figure()
-plt.plot(x, x**2)
-
-plt.figure()
-plt.plot(x, x**3)
-
-plt.show()
+  line((-2, 0), (2, 0), mark: (end: ">"))
+  line((0, -1), (0, 3), mark: (end: ">"))
+  circle((0, 1), radius: (1.5, 0.8), stroke: blue)
+  content((0, 1), [共轭椭圆 $x^2 / a^2 + y^2 / b^2 = 1$])
+})
 ```
 
-只有带标记的代码块会执行；检测到标记后会在代码流式生成期间预热，成功后整个代码框（含语言栏和复制按钮）消失，每个 figure 按顺序显示为一张 PNG。
+只有首个非空行为 `// @plot` 的代码块会渲染。成功后整个代码框会被对应 SVG 图片替换，页面排版保持“文字 → 图 → 文字”。渲染失败时保留原代码块，并在浏览器控制台输出错误。
 
-中文字体和负号显示已全局配置，无需在代码块里重复设置 `font.sans-serif`。普通图片自动适应消息宽度，超宽表格图片会限制在容器内并支持横向滚动。字体来自 Noto CJK Sans `Sans2.004`，使用 `vendor/fonts/OFL.txt` 中的 SIL Open Font License 1.1。
+当前内置 Typst 0.14.2，以及以下完整离线绘图套件：
 
-## MathText 公式
+- CeTZ 0.5.2：基础矢量绘图、几何、坐标和变换。
+- CeTZ-Plot 0.1.4：函数曲线、坐标轴、数据图和统计图。
+- Simple-Plot 1.0.0：更简洁的数学函数图、参数曲线和面积图 API。
+- Fletcher 0.5.8：流程图、网络图、状态图和交换图。
+- CeTZ-Venn 0.2.0：二集合和三集合 Venn 图。
 
-标题、坐标轴标签、图例和注释中的 `$...$` 会由 Matplotlib 内置 MathText 渲染，无需安装 LaTeX，也不增加插件体积或启动时间：
+这些包的固定版本依赖也已一并内置；所有代码、包和字体都从扩展目录加载，不需要联网。
 
-```python
-# @plot
-import matplotlib.pyplot as plt
+椭圆应使用 CeTZ 原生 `circle(center, radius: (rx, ry))`，不要用少量采样点和折线近似。函数曲线应按解析式计算，并保持坐标轴比例正确。
 
-x = [-2, -1, 0, 1, 2]
-y = [4, 1, 0, 1, 4]
+## 构建
 
-fig, ax = plt.subplots()
-ax.plot(x, y)
-ax.set_title(r"$f(x)=\frac{x^2}{1+\alpha}$")
-ax.set_xlabel(r"$x\in[-2,2]$")
-ax.set_ylabel(r"$f(x)$")
-plt.show()
+仓库已经包含可直接加载的构建产物。修改 `src/typst-runtime.mjs` 或升级依赖后再运行：
+
+```text
+npm install
+npm run build
 ```
 
-默认使用 Matplotlib 自带的 STIX 数学字体。MathText 支持上下标、分数、根号、求和、积分、希腊字母和常用数学符号，但不是完整 LaTeX：不要生成 `\begin{matrix}`、`align`、`cases`、`\newcommand`、任意宏包或完整 LaTeX 文档。中文放在 `$...$` 外即可继续使用 Noto Sans CJK SC。
-
-## 几何绘图
-
-GPTFig 不再提供私有几何 API。几何构造和计算使用现成的 `geometer` 0.4.2；绘图使用 Matplotlib 标准工具。
-
-- 射影几何、齐次坐标、无穷远点、交比和圆锥曲线：`geometer`
-- 平面图形：`matplotlib.patches` 中的 `Ellipse`、`Arc`、`Polygon`、`FancyArrowPatch` 等
-- 立体图形：Matplotlib 内置的 `mpl_toolkits.mplot3d` 和 `Poly3DCollection`
-
-```python
-# @plot
-import matplotlib.pyplot as plt
-from matplotlib.patches import Ellipse
-from geometer import Point, Line, meet
-
-A, B = Point(-3, 0), Point(3, 0)
-C, D = Point(-1.5, 1.7), Point(1.5, 1.7)
-X = meet(Line(A, D), Line(B, C))
-
-def xy(point):
-    return point.normalized_array[:2].astype(float)
-
-fig, ax = plt.subplots(figsize=(7, 5), layout="constrained")
-ax.add_patch(Ellipse((0, 0), 6, 4, fill=False, linewidth=1.8))
-for P, Q in ((A, D), (B, C)):
-    p, q = xy(P), xy(Q)
-    ax.plot([p[0], q[0]], [p[1], q[1]], color="black")
-
-x, y = xy(X)
-ax.scatter(x, y, color="tab:red", zorder=3)
-ax.text(x, y, "  X")
-ax.set_aspect("equal")
-ax.axis("off")
-plt.show()
-```
-
-`geometer` 还提供 `Conic.from_points`、`crossratio`、`join`、`meet`、射影变换以及三维点、直线和平面计算。它负责几何关系，Matplotlib 负责最终静态 PNG 的样式和排版。
+构建脚本会把固定版本的 Typst WASM 和运行时代码写入 `vendor/typst/`。CeTZ 绘图套件、依赖和字体作为离线资源保留在仓库中。
 
 ## 安全说明
 
-GPTFig 只自动执行带 `# @plot` 标记的代码块，但这些代码仍是完整的 Python。请只在你信任的对话中使用，并留意高计算量代码可能占用较多浏览器内存。
+Typst 比执行任意 Python 更受限制，但复杂或恶意输入仍可能长时间占用 CPU 和内存。只渲染你信任的对话内容；扩展不会读取网络包或执行 `shell-escape`。
 
 ## 许可证
 

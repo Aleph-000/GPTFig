@@ -1,0 +1,16 @@
+{
+  "name": "gptfig-typst-cetz",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@myriaddreamin/typst-ts-renderer": "0.7.0",
+    "@myriaddreamin/typst-ts-web-compiler": "0.7.0",
+    "@myriaddreamin/typst.ts": "0.7.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.8"
+  }
+}

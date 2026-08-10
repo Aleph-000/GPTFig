@@ -8,3 +8,4 @@ Desktop.ini
 .vscode/
 .playwright-cli/
 output/
+node_modules/

@@ -1,7 +1,23 @@
-const MARKER = "# @plot";
+const MARKER = "// @plot";
 const pending = new Map();
 const seen = new WeakMap();
 const warmed = new WeakSet();
+
+function imageSvg(source) {
+  const parsed = new DOMParser().parseFromString(source, "text/html");
+  const svg = parsed.querySelector("svg");
+  if (!svg) throw new Error("Typst did not return an SVG");
+  svg.querySelectorAll("script").forEach((node) => node.remove());
+  svg.querySelectorAll("*").forEach((node) => {
+    for (const attribute of [...node.attributes]) {
+      if (/^on/i.test(attribute.name)) node.removeAttribute(attribute.name);
+      if (/^(?:href|xlink:href)$/i.test(attribute.name) && !attribute.value.startsWith("#")) {
+        node.removeAttribute(attribute.name);
+      }
+    }
+  });
+  return new XMLSerializer().serializeToString(svg);
+}
 
 function prewarm(code) {
   if (warmed.has(code)) return;
@@ -9,7 +25,7 @@ function prewarm(code) {
     .replace(/\r\n?/g, "\n")
     .split("\n")
     .find((line) => line.trim() !== "");
-  if (first !== MARKER) return;
+  if (first?.trim() !== MARKER) return;
 
   warmed.add(code);
   chrome.runtime.sendMessage({ type: "warmup" }).catch(() => warmed.delete(code));
@@ -46,30 +62,23 @@ async function render(pre, code) {
   const source = code.textContent.replace(/\r\n?/g, "\n");
   const lines = source.split("\n");
   const marker = lines.findIndex((line) => line.trim() !== "");
-  if (marker < 0 || lines[marker] !== MARKER || seen.get(code) === source) return;
+  if (marker < 0 || lines[marker].trim() !== MARKER || seen.get(code) === source) return;
 
   seen.set(code, source);
   try {
     const result = await chrome.runtime.sendMessage({
-      type: "render-plot",
+      type: "render-typst",
       code: lines.slice(marker + 1).join("\n")
     });
-    if (!result?.ok || !result.images?.length) throw new Error(result?.error);
+    if (!result?.ok || !result.svg) throw new Error(result?.error);
     if (!pre.isConnected || code.textContent.replace(/\r\n?/g, "\n") !== source) return;
 
     const output = document.createElement("div");
     output.className = "gptfig-inline-plot";
-    for (const png of result.images) {
-      const image = document.createElement("img");
-      image.src = `data:image/png;base64,${png}`;
-      image.alt = "Python plot";
-      image.addEventListener("load", () => {
-        if (image.naturalWidth > 1200 && image.naturalWidth > image.naturalHeight * 2) {
-          image.classList.add("is-wide");
-        }
-      }, { once: true });
-      output.append(image);
-    }
+    const image = document.createElement("img");
+    image.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(imageSvg(result.svg))}`;
+    image.alt = "Typst diagram";
+    output.append(image);
     frameFor(pre).replaceWith(output);
   } catch (error) {
     console.error("GPTFig:", error);
