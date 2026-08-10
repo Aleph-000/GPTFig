@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "GPTFig",
+  "version": "0.1.0",
+  "description": "Render # @plot Python blocks as inline Matplotlib figures in ChatGPT.",
+  "content_scripts": [
+    {
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "js": ["content.js"],
+      "css": ["style.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "worker.mjs",
+    "type": "module"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  }
+}

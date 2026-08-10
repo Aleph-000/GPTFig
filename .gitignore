@@ -1,0 +1,10 @@
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+*.temp
+.idea/
+.vscode/
+.playwright-cli/
+output/
