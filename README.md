@@ -56,6 +56,10 @@ npm run build
 
 扩展不申请额外权限，也不会把绘图代码发送给外部服务。只渲染你信任的内容。第三方许可见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。项目源代码目前未声明开源许可证。
 
+### 友情链接
+
+[Linux Do](https://linux.do)
+
 ## English
 
 GPTFig is a Chrome/Edge extension that replaces ChatGPT `// @plot` Typst + CeTZ code blocks with inline static SVG images. The compiler, drawing packages, fonts, and dependencies are bundled and run locally in the browser.
