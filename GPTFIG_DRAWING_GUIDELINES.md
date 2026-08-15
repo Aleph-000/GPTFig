@@ -45,8 +45,8 @@
 - 图内公式使用 Typst 数学语法 `$...$`，不要使用 LaTeX 命令。
 - 数学模式中的英文单词、缩写和特殊文本一律用双引号包裹，如 `$"VWAP" = 0.331$`、`$"mid" = ("bid" + "ask") / 2$`、`$"Buy@0.43"$`；只有单字母变量可以不加引号。
 - `content()` 中的普通文字必须用 `[...]` 包裹，例如 `content((0, 0), [说明文字])`；数学公式使用 `$...$`，例如 `content((0, 0), $x^2$)`，禁止直接传入未包裹的中文文字。
-- `rect()` 的 `radius` 使用数字或百分比，如 `radius: 5%`，不要写 `radius: 5pt`。
-- `circle()` 的 `radius` 使用数字或数组，如 `radius: 0.07`，不要使用 `pt`。
+- `pt` 不是禁用单位：仅在 API 参数类型允许 `length` 时使用，如线宽 `stroke: 0.8pt`、字号和内边距；若参数要求 `number`、`ratio`、数组或字典，则按文档类型传值，不能附加 `pt`。
+- CeTZ 几何尺寸通常使用画布坐标单位：[`circle.radius`](https://cetz-package.github.io/docs/api/draw-functions/shapes/circle/) 使用数字或二元数组，如 `radius: 0.07`、`radius: (2, 1)`；[`rect.radius`](https://cetz-package.github.io/docs/api/draw-functions/shapes/rect/) 使用数字、百分比或字典，如 `radius: 0.1`、`radius: 5%`。其他函数必须查对应 API，不能根据参数名猜测单位。
 - Typst 数学双向箭头使用 `arrow.l.r`，不要写 `arrows.quad`。
 - 可以直接使用中文；避免 Emoji 和罕见字符。图中非必要不写中文解释，只保留数学符号和点名。
 - 默认采用简洁教材风格：标签不重叠，主体用实线，辅助线用虚线，颜色用于突出重点，如果利于展示则标出点的字母。可以用彩色，让视觉风格简洁美观。
